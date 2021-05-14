@@ -2,6 +2,7 @@ package shop
 
 import (
 	"atlas-nss/json"
+	"atlas-nss/shop/item"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -20,18 +21,30 @@ func GetShop(fl logrus.FieldLogger, db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		items, err := item.GetByShopId(db)(uint32(npcId))
+		if err != nil {
+			l.WithError(err).Errorf("Unable to get the shops items.")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		is := make([]ItemAttributes, 0)
+		for _, i := range items {
+			is = append(is, ItemAttributes{
+				ItemId:   i.ItemId(),
+				Price:    i.Price(),
+				Pitch:    i.Pitch(),
+				Position: i.Position(),
+			})
+		}
+
 		result := &DataContainer{
 			Data: DataBody{
 				Id:   "",
 				Type: "",
 				Attributes: Attributes{
 					NPC: uint32(npcId),
-					Items: []ItemAttributes{{
-						ItemId:   3990000,
-						Price:    500,
-						Pitch:    0,
-						Position: 1,
-					}},
+					Items: is,
 				},
 			},
 		}

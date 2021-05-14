@@ -16,5 +16,5 @@ type entity struct {
 }
 
 func (e entity) TableName() string {
-	return "shopItems"
+	return "shop_items"
 }

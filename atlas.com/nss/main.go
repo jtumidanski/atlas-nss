@@ -4,6 +4,7 @@ import (
 	"atlas-nss/database"
 	"atlas-nss/logger"
 	"atlas-nss/rest"
+	"atlas-nss/shop/item"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,6 +14,8 @@ func main() {
 	l := logger.CreateLogger()
 
 	db := database.ConnectToDatabase(l)
+
+	item.Initialize(l, db)
 
 	rest.CreateRestService(l, db)
 
