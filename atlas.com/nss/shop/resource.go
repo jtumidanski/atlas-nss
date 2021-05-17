@@ -28,6 +28,11 @@ func GetShop(fl logrus.FieldLogger, db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		if len(items) == 0 {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
 		is := make([]ItemAttributes, 0)
 		for _, i := range items {
 			is = append(is, ItemAttributes{
