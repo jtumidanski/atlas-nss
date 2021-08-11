@@ -19,7 +19,7 @@ func main() {
 	wg := &sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	db := database.ConnectToDatabase(l)
+	db := database.Connect(l, database.SetMigrations(item.Migration))
 
 	item.Initialize(l, db)
 
