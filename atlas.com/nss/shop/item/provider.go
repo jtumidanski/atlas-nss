@@ -1,28 +1,24 @@
 package item
 
-import "gorm.io/gorm"
+import (
+	"atlas-nss/database"
+	"atlas-nss/model"
+	"gorm.io/gorm"
+)
 
-func getByShopId(db *gorm.DB, shopId uint32) ([]*Model, error) {
-	var results []entity
-	err := db.Where(&entity{ShopId: shopId}).Find(&results).Error
-	if err != nil {
-		return make([]*Model, 0), err
+func getByShopId(shopId uint32) database.EntitySliceProvider[entity] {
+	return func(db *gorm.DB) model.SliceProvider[entity] {
+		return database.SliceQuery[entity](db, &entity{ShopId: shopId})
 	}
-
-	var items []*Model
-	for _, i := range results {
-		items = append(items, makeItem(&i))
-	}
-	return items, nil
 }
 
-func makeItem(e *entity) *Model {
-	return &Model{
+func makeItem(e entity) (Model, error) {
+	return Model{
 		id:       e.ID,
 		shopId:   e.ShopId,
 		itemId:   e.ItemId,
 		price:    e.Price,
 		pitch:    e.Pitch,
 		position: e.Position,
-	}
+	}, nil
 }

@@ -1,6 +1,7 @@
 package item
 
 import (
+	"atlas-nss/database"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"os"
@@ -36,8 +37,8 @@ func Initialize(l logrus.FieldLogger, db *gorm.DB) {
 	}
 }
 
-func GetByShopId(db *gorm.DB) func(shopId uint32) ([]*Model, error) {
-	return func(shopId uint32) ([]*Model, error) {
-		return getByShopId(db, shopId)
+func GetByShopId(db *gorm.DB) func(shopId uint32) ([]Model, error) {
+	return func(shopId uint32) ([]Model, error) {
+		return database.ModelSliceProvider[Model, entity](db)(getByShopId(shopId), makeItem)()
 	}
 }
